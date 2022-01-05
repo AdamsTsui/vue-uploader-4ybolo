@@ -1,14 +1,24 @@
 {
   "name": "vue-uploader-4ybolo",
   "version": "0.1.0",
-  "private": true,
+  "description": "A Vue.js upload component powered by simple-uploader.js",
+  "main": "dist/vue-uploader-4ybolo.umd.min.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AdamsTsui/vue-uploader-4ybolo"
+  },
+  "bugs": "https://github.com/AdamsTsui/vue-uploader-4ybolo/issues",
+  "homepage": "https://github.com/AdamsTsui/vue-uploader-4ybolo",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "dev": "vue-cli-service serve",
+    "build": "vue-cli-service build --target lib --name vue-uploader-4ybolo src/index.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "core-js": "^3.6.5",
+    "simple-uploader.js": "^0.5.6",
     "vue": "^3.0.0"
   },
   "devDependencies": {
