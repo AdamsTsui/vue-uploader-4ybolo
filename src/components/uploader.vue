@@ -20,6 +20,8 @@
   import UploaderUnsupport from './unsupport.vue'
   import UploaderList from './list.vue'
 
+  import { ref, reactive } from 'vue'
+
   const COMPONENT_NAME = 'uploader'
   const FILE_ADDED_EVENT = 'fileAdded'
   const FILES_ADDED_EVENT = 'filesAdded'
@@ -56,74 +58,6 @@
         }
       }
     },
-    data () {
-      return {
-        started: false,
-        files: [],
-        fileList: []
-      }
-    },
-    methods: {
-      uploadStart () {
-        this.started = true
-      },
-      fileAdded (file) {
-        this.$emit(kebabCase(FILE_ADDED_EVENT), file)
-        if (file.ignored) {
-          // is ignored, filter it
-          return false
-        }
-      },
-      filesAdded (files, fileList) {
-        this.$emit(kebabCase(FILES_ADDED_EVENT), files, fileList)
-        if (files.ignored || fileList.ignored) {
-          // is ignored, filter it
-          return false
-        }
-      },
-      fileRemoved () {
-        this.files = this.uploader.files
-        this.fileList = this.uploader.fileList
-      },
-      filesSubmitted () {
-        this.files = this.uploader.files
-        this.fileList = this.uploader.fileList
-        if (this.autoStart) {
-          this.uploader.upload()
-        }
-      },
-      allEvent (...args) {
-        const name = args[0]
-        const EVENTSMAP = {
-          [FILE_ADDED_EVENT]: true,
-          [FILES_ADDED_EVENT]: true,
-          [UPLOAD_START_EVENT]: 'uploadStart'
-        }
-        const handler = EVENTSMAP[name]
-        if (handler) {
-          if (handler === true) {
-            return
-          }
-          this[handler].apply(this, args.slice(1))
-        }
-        args[0] = kebabCase(name)
-        this.$emit.apply(this, args)
-      }
-    },
-    created () {
-      const _props = {
-        ...this.options,
-        initialPaused: !this.autoStart
-      }
-      const uploader = new Uploader(_props)
-      this.uploader = uploader
-      this.uploader.fileStatusText = this.fileStatusText
-      uploader.on('catchAll', this.allEvent)
-      uploader.on(FILE_ADDED_EVENT, this.fileAdded)
-      uploader.on(FILES_ADDED_EVENT, this.filesAdded)
-      uploader.on('fileRemoved', this.fileRemoved)
-      uploader.on('filesSubmitted', this.filesSubmitted)
-    },
     unmounted () {
       const uploader = this.uploader
       uploader.off('catchAll', this.allEvent)
@@ -138,7 +72,96 @@
       UploaderDrop,
       UploaderUnsupport,
       UploaderList
+    },
+
+    setup(props, ctx) {
+      let firstFileId = ref(0)
+      let started = ref(false)
+      let files = ref([])
+      let fileList = ref([])
+      const { options, autoStart, fileStatusText } = reactive(props)
+
+      const _props = {
+        ...options,
+        initialPaused: !autoStart
+      }
+
+      const uploader = new Uploader(_props)
+      uploader.fileStatusText = fileStatusText
+
+      const evtHandlers = {
+        uploadStart: () => {
+          started.value = true
+        }
+      }
+
+      const allEvent = (...args) => {
+        const name = args[0]
+        const EVENTSMAP = {
+          [FILE_ADDED_EVENT]: true,
+          [FILES_ADDED_EVENT]: true,
+          [UPLOAD_START_EVENT]: 'uploadStart'
+        }
+        const handler = EVENTSMAP[name]
+        if (handler) {
+          if (handler === true) {
+            return
+          }
+          evtHandlers[handler].apply(ctx, args.slice(1))
+        }
+        args[0] = kebabCase(name)
+        ctx.emit.apply(ctx, args)
+      }
+
+      const fileAdded = (file) => {
+        ctx.emit(kebabCase(FILE_ADDED_EVENT), file)
+        if (file.ignored) {
+          return false
+        }
+      }
+
+      const filesAdded = (files, fileList) => {
+        ctx.emit(kebabCase(FILES_ADDED_EVENT), files, fileList)
+        if (files.ignored || fileList.ignored) {
+          return false
+        }
+      }
+
+      const fileRemoved = () => {
+        files.value = uploader.files
+        fileList.value = uploader.fileList
+        firstFileId.value = uploader.fileList.length > 0 ? uploader.fileList[0].id : 0
+      }
+
+      const filesSubmitted =  () => {
+        files.value = uploader.files
+        fileList.value = uploader.fileList
+        firstFileId.value = uploader.fileList.length > 0 ? uploader.fileList[0].id : 0
+        if (autoStart) {
+          uploader.upload()
+        }
+      }
+
+      uploader.on('catchAll', allEvent)
+      uploader.on(FILE_ADDED_EVENT, fileAdded)
+      uploader.on(FILES_ADDED_EVENT, filesAdded)
+      uploader.on('fileRemoved', fileRemoved)
+      uploader.on('filesSubmitted', filesSubmitted)
+
+      return {
+        started,
+        firstFileId,
+        files,
+        fileList,
+        uploader,
+        allEvent,
+        fileAdded,
+        filesAdded,
+        fileRemoved,
+        filesSubmitted
+      }
     }
+
   }
 </script>
 

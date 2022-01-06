@@ -1,7 +1,7 @@
 <template>
   <div class="uploader-list">
     <slot :file-list="fileList">
-      <ul>
+      <ul :key="firstFileId">
         <li v-for="file in fileList" :key="file.id">
           <uploader-file :file="file" :list="true"></uploader-file>
         </li>
@@ -11,21 +11,24 @@
 </template>
 
 <script>
-  import { uploaderMixin } from '../common/mixins'
   import UploaderFile from './file.vue'
+  import { computed, inject } from 'vue'
 
   const COMPONENT_NAME = 'uploader-list'
 
   export default {
     name: COMPONENT_NAME,
-    mixins: [uploaderMixin],
-    computed: {
-      fileList () {
-        return this.uploader.fileList
-      }
-    },
     components: {
       UploaderFile
+    },
+    setup() {
+      const uploader = inject('uploader')
+      const firstFileId = computed(() => uploader.firstFileId)
+      const fileList = computed(() => uploader.fileList)
+      return {
+        firstFileId,
+        fileList
+      }
     }
   }
 </script>

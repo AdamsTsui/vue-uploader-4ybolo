@@ -209,7 +209,7 @@
         const rootFile = args[0]
         const file = args[1]
         const target = this.list ? rootFile : file
-        if (this.file === target) {
+        if (this.file.id === target.id) {
           if (this.list && event === 'fileSuccess') {
             this.processResponse(args[2])
             return
@@ -297,7 +297,6 @@
     },
     beforeUnmount () {
       events.forEach((event) => {
-        console.log('evt:::' + event)
         this.file.uploader.off(event, this._handlers[event])
       })
       this._handlers = null

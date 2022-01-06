@@ -3,7 +3,6 @@ import UploaderBtn from './components/btn.vue'
 import UploaderDrop from './components/drop.vue'
 import UploaderUnsupport from './components/unsupport.vue'
 import UploaderList from './components/list.vue'
-import UploaderFiles from './components/files.vue'
 import UploaderFile from './components/file.vue'
 
 const uploader = {
@@ -13,7 +12,6 @@ const uploader = {
   UploaderDrop,
   UploaderUnsupport,
   UploaderList,
-  UploaderFiles,
   UploaderFile
 }
 
@@ -28,6 +26,5 @@ function install (vueApp) {
   vueApp.component(UploaderDrop.name, UploaderDrop)
   vueApp.component(UploaderUnsupport.name, UploaderUnsupport)
   vueApp.component(UploaderList.name, UploaderList)
-  vueApp.component(UploaderFiles.name, UploaderFiles)
   vueApp.component(UploaderFile.name, UploaderFile)
 }
