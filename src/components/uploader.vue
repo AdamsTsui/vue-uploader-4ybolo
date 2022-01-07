@@ -75,7 +75,6 @@
     },
 
     setup(props, ctx) {
-      let firstFileId = ref(0)
       let started = ref(false)
       let files = ref([])
       let fileList = ref([])
@@ -128,15 +127,13 @@
       }
 
       const fileRemoved = () => {
-        files.value = uploader.files
-        fileList.value = uploader.fileList
-        firstFileId.value = uploader.fileList.length > 0 ? uploader.fileList[0].id : 0
+        files.value.splice(0, files.value.length, ...uploader.files)
+        fileList.value.splice(0, fileList.value.length, ...uploader.fileList)
       }
 
       const filesSubmitted =  () => {
-        files.value = uploader.files
-        fileList.value = uploader.fileList
-        firstFileId.value = uploader.fileList.length > 0 ? uploader.fileList[0].id : 0
+        files.value.splice(0, files.value.length, ...uploader.files)
+        fileList.value.splice(0, fileList.value.length, ...uploader.fileList)
         if (autoStart) {
           uploader.upload()
         }
@@ -150,7 +147,6 @@
 
       return {
         started,
-        firstFileId,
         files,
         fileList,
         uploader,

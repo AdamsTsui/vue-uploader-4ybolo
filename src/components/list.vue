@@ -1,7 +1,7 @@
 <template>
   <div class="uploader-list">
     <slot :file-list="fileList">
-      <ul :key="firstFileId">
+      <ul>
         <li v-for="file in fileList" :key="file.id">
           <uploader-file :file="file" :list="true"></uploader-file>
         </li>
@@ -23,10 +23,8 @@
     },
     setup() {
       const uploader = inject('uploader')
-      const firstFileId = computed(() => uploader.firstFileId)
       const fileList = computed(() => uploader.fileList)
       return {
-        firstFileId,
         fileList
       }
     }
