@@ -37,6 +37,7 @@
       return {
         options: {
           target: '/video/front/videoTrans/uploadFromBreak',
+          mergeStatusUrl: '/file/upload/progress',
           testChunks: false,
           allowDuplicateUploads: true,
           maxChunkRetries: 3,
@@ -44,6 +45,7 @@
           singleFile: true,
           chunkSize: 20 * 1024 * 1024,
           uploadMethod: 'POST',
+          mergeStatusMethod: 'GET',
           parseTimeRemaining: function (timeRemaining, parsedTimeRemaining) {
             return parsedTimeRemaining
               .replace(/\syears?/, '年')
@@ -75,9 +77,14 @@
               }
             }
           },
+          processMergeComplete: function (file) {
+            // 文件合并完成
+            console.log(file)
+          }
         },
         fileStatusText: {
           success: '上传成功',
+          merging: '合并中',
           error: '上传出错',
           uploading: '加载中',
           paused: '暂停',

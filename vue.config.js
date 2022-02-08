@@ -8,10 +8,6 @@ module.exports = {
     config.when(process.env.NODE_ENV === 'development', config => {
       config.entry('app').clear().add('./example/main.js').end()
     })
-
-    config.when(process.env.NODE_ENV === 'production', config => {
-      config.entry('app').clear().add('./src/index.js').end()
-    })
   },
 
   // 配置代理

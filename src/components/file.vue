@@ -78,6 +78,7 @@
         currentSpeed: 0,
         isComplete: false,
         isUploading: false,
+        isMerging: false,
         size: 0,
         formatedSize: '',
         uploadedSize: 0,
@@ -85,7 +86,11 @@
         timeRemaining: 0,
         type: '',
         extension: '',
-        progressingClass: ''
+        progressingClass: '',
+        mergeStatusUrl: this.file.uploader.opts.mergeStatusUrl || '',
+        mergeStatusMethod: this.file.uploader.opts.mergeStatusMethod || 'POST',
+        headers: this.file.uploader.opts.headers || {},
+        mergeStatusInterval: null
       }
     },
     computed: {
@@ -124,11 +129,14 @@
       },
       status () {
         const isUploading = this.isUploading
+        const isMerging =  this.isMerging
         const isComplete = this.isComplete
         const isError = this.error
         const paused = this.paused
         if (isComplete) {
           return 'success'
+        } else if (isMerging) {
+          return 'merging'
         } else if (isError) {
           return 'error'
         } else if (isUploading) {
@@ -226,12 +234,34 @@
         this._actionCheck()
       },
       _fileSuccess (rootFile, file, message) {
+        const _this = this
         if (rootFile) {
           this.processResponse(message)
         }
         this._fileProgress()
         this.error = false
-        this.isComplete = true
+        if (this.mergeStatusUrl) {
+          this.isMerging = true
+
+          const reqUrl = this.mergeStatusUrl.endsWith('/') ? this.mergeStatusUrl + this.file.id : this.mergeStatusUrl + '/' + this.file.id
+          // 发送状态请求。。。。
+          this.mergeStatusInterval = setInterval(async () => {
+            const res = await fetch(reqUrl, {method: _this.mergeStatusMethod, headers: _this.headers})
+            if (res.data.code === 0) {
+              _this.progress = res.data.data
+              if (Math.floor(_this.progress) > 99) {
+                _this.isComplete = true
+                _this.isMerging = false
+                if (typeof _this.file.uploader.opts.processMergeComplete === 'function') {
+                  _this.file.uploader.opts.processMergeComplete(_this.file)
+                }
+                clearInterval(_this.mergeStatusInterval)
+              }
+            }
+          }, 2000)
+        } else {
+          this.isComplete = true
+        }
         this.isUploading = false
       },
       _fileComplete () {
@@ -296,6 +326,9 @@
       })
     },
     beforeUnmount () {
+      if (this.mergeStatusInterval) {
+        clearInterval(this.mergeStatusInterval)
+      }
       events.forEach((event) => {
         this.file.uploader.off(event, this._handlers[event])
       })
@@ -321,6 +354,9 @@
   }
   .uploader-file[status="error"] .uploader-file-retry {
     display: block;
+  }
+  .uploader-file[status="merging"] .uploader-file-remove {
+    display: none;
   }
   .uploader-file[status="success"] .uploader-file-remove {
     display: none;
