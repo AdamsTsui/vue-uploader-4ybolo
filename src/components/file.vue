@@ -243,7 +243,7 @@
         if (this.mergeStatusUrl) {
           this.isMerging = true
 
-          const reqUrl = this.mergeStatusUrl.endsWith('/') ? this.mergeStatusUrl + this.file.id : this.mergeStatusUrl + '/' + this.file.id
+          const reqUrl = this.mergeStatusUrl.endsWith('/') ? this.mergeStatusUrl + this.file.uniqueIdentifier : this.mergeStatusUrl + '/' + this.file.uniqueIdentifier
           // 发送状态请求。。。。
           this.mergeStatusInterval = setInterval(async () => {
             const res = await fetch(reqUrl, {method: _this.mergeStatusMethod, headers: _this.headers})
