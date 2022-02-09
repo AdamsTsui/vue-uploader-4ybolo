@@ -1,6 +1,6 @@
 {
   "name": "vue-uploader-4ybolo",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "description": "A Vue.js upload component powered by simple-uploader.js",
   "main": "dist/vue-uploader-4ybolo.umd.min.js",
   "license": "MIT",
