@@ -248,18 +248,18 @@
           // 发送状态请求。。。。
           this.mergeStatusInterval = setInterval(() => {
             fetch(reqUrl, {method: _this.mergeStatusMethod, headers: _this.headers}).then(res => {
-              console.log('合并进度返回:::' + JSON.stringify(res))
-              if (res.data.code === 0) {
-                _this.progress = res.data.data
-                if (Math.floor(_this.progress) === 100) {
-                  _this.isComplete = true
-                  _this.isMerging = false
-                  if (typeof _this.file.uploader.opts.processMergeComplete === 'function') {
-                    _this.file.uploader.opts.processMergeComplete(_this.file)
-                  }
-                  clearInterval(_this.mergeStatusInterval)
-                }
-              }
+              console.log('合并进度返回:::' + res.json())
+              // if (res.data.code === 0) {
+              //   _this.progress = res.data.data
+              //   if (Math.floor(_this.progress) === 100) {
+              //     _this.isComplete = true
+              //     _this.isMerging = false
+              //     if (typeof _this.file.uploader.opts.processMergeComplete === 'function') {
+              //       _this.file.uploader.opts.processMergeComplete(_this.file)
+              //     }
+              //     clearInterval(_this.mergeStatusInterval)
+              //   }
+              // }
             }).catch(err => {
               console.log(err)
               clearInterval(_this.mergeStatusInterval)
