@@ -252,8 +252,9 @@
             }).then(res => {
               // console.log('合并进度返回:::' + JSON.stringify(res))
               if (res.code === 0) {
-                _this.progress = res.data
-                if (Math.floor(_this.progress) === 100) {
+                const _progress = res.data
+                _this.progress = _progress / 100
+                if (Math.floor(_progress) === 100) {
                   _this.isComplete = true
                   _this.isMerging = false
                   if (typeof _this.file.uploader.opts.processMergeComplete === 'function') {
