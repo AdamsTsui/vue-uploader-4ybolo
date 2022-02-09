@@ -246,9 +246,9 @@
 
           const reqUrl = this.mergeStatusUrl.endsWith('/') ? this.mergeStatusUrl + this.file.uniqueIdentifier : this.mergeStatusUrl + '/' + this.file.uniqueIdentifier
           // 发送状态请求。。。。
-          this.mergeStatusInterval = setTimeout(async () => {
+          this.mergeStatusInterval = setInterval(async () => {
             const res = await fetch(reqUrl, {method: _this.mergeStatusMethod, headers: _this.headers})
-            console.log('sss:::' + JSON.stringify(res))
+            console.log('合并进度返回:::' + JSON.stringify(res))
             if (res.data.code === 0) {
               _this.progress = res.data.data
               if (Math.floor(_this.progress) > 99) {
@@ -260,7 +260,7 @@
                 clearInterval(_this.mergeStatusInterval)
               }
             }
-          }, 3000)
+          }, 2000)
         } else {
           this.isComplete = true
         }
