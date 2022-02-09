@@ -247,7 +247,7 @@
           const reqUrl = this.mergeStatusUrl.endsWith('/') ? this.mergeStatusUrl + this.file.uniqueIdentifier : this.mergeStatusUrl + '/' + this.file.uniqueIdentifier
           // 发送状态请求。。。。
           this.mergeStatusInterval = setInterval(async () => {
-            const res = await fetch(reqUrl, {method: _this.mergeStatusMethod, headers: _this.headers})
+            const res = await fetch(reqUrl, {method: _this.mergeStatusMethod, headers: _this.headers, mode: 'cors', cache: 'default'})
             console.log('合并进度返回:::' + JSON.stringify(res))
             if (res.data.code === 0) {
               _this.progress = res.data.data
