@@ -268,7 +268,7 @@
               clearInterval(_this.mergeStatusInterval)
             })
 
-          }, 2000)
+          }, 1500)
         } else {
           this.isComplete = true
         }
