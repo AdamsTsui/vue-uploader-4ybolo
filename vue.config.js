@@ -8,6 +8,10 @@ module.exports = {
     config.when(process.env.NODE_ENV === 'development', config => {
       config.entry('app').clear().add('./example/main.js').end()
     })
+
+    config.when(process.env.NODE_ENV === 'production', config => {
+      config.output.library('YboloUploader').libraryTarget('umd').end()
+    })
   },
 
   // 配置代理
